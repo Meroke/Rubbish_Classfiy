@@ -11,12 +11,14 @@ import cv2
 import time
 import os
 import EasyDL_cpp as ec
+import logger_print as log
 
-
+#-------------------------------------- Init Part
+# ACM for arduino, USB for stm32
 def serial_init():
     if 'Linux' in platform.platform():
         try:
-            print("using USB0")
+            # print("using USB0")
             com1 = serial.Serial(
                 '/dev/ttyUSB0',
                 # '/dev/ttyUSB2',
@@ -27,9 +29,9 @@ def serial_init():
                 parity=serial.PARITY_NONE,
                 stopbits=serial.STOPBITS_ONE)
         except:
-            print("using ACM1")
+            # print("using ACM0")
             com1 = serial.Serial(
-                '/dev/ttyACM1',
+                '/dev/ttyACM0',
                 # '/dev/ttyUSB2',
 
                 115200,
@@ -61,9 +63,15 @@ detect_num = 0
 my_serial = serial_init()
 list_num = 0
 time_num=0
+global cameraCapture
 
 
 
+
+#-------------------------------------- Init Part End
+
+
+# -------------------------------------- Mseeage Part
 # Decoator will throw an exception and finish all program when error occurs 
 # Function: wait 5s for finish RB_Class _Send()
 # @func_set_timeout(5)
@@ -71,23 +79,27 @@ def RB_Class_Send(serial_wheel,ClsNum=0):
     pathw = str(ClsNum)
     # pathw = "s"
     serial_wheel.write(pathw.encode("utf-8"))
-    print("RB Class Send : {}\n---------------------------------".format(ClsNum))
-    if(ClsNum is 0 or ClsNum is 5):
-        try:
-            while (True):
-                if isComplete(serial_wheel) == True:
-                    break
-        except: 
-            print("Erroe:timeout(3)")
-        # traceback.print_exc()
+    # print("RB Class Send : {}\n---------------------------------".format(ClsNum))
+    log.logger.info("RB Class Send : {}\n---------------------------------".format(ClsNum))
+    # ** 
+    # if(ClsNum is 0 or ClsNum is 5):
+    #     try:
+    #         while (True):
+    #             if isComplete(serial_wheel) == True:
+    #                 break
+    #     except Exception as e: 
+    #         # print("Erroe:timeout(3)")
+        # traceback.# print_exc()
 
 
 
 def isComplete(serial):
     s = serial.readline()
-    print("waiting for feedback...", s)
+    # print("waiting for feedback...", s)
+    log.logger.info("waiting for feedback...", s)
     if b'K' in s:
-        print("complete!\n--------------------------------------")
+        # print("complete!\n--------------------------------------")
+        log.logger.info("complete!\n--------------------------------------")
         return True
 
 
@@ -97,40 +109,60 @@ def SendMessage(rubbish_class):
         my_serial.open()
     try:
         RB_Class_Send(my_serial,rubbish_class)
-    except:
-        print("error func_timeout(5) overcome! Resending!")
+    except Exception as e:
+        # print("error func_timeout(5) overcome! Resending!")
+        log.logger.error("error func_timeout(5) overcome! Resending!\n" + str(e))
         # RB_Class_Send(my_serial,rubbish_class)
     if(rubbish_class > 0 and rubbish_class < 5):
-        print("send:: {}".format(rubbish_class))
+        # print("send:: {}".format(rubbish_class))
+        # log.logger.info("send:: {}".format(rubbish_class))
+        pv.Main_text.COUNT += 1
         if rubbish_class is 1:
-            pv.Main_text.COUNT += 1
             pv.Main_text.CATEGOARY = "厨余垃圾"
             pv.numberofRubbish.kinchenBin += 1
         elif rubbish_class is 2:
-            pv.Main_text.COUNT += 1
             pv.Main_text.CATEGOARY = "有害垃圾"
             pv.numberofRubbish.harmfulBin += 1
         elif rubbish_class is 3:
-            pv.Main_text.COUNT += 1
             pv.Main_text.CATEGOARY = "可回收垃圾"
             pv.numberofRubbish.recyclabelsBin += 1
         elif rubbish_class is 4:
-            pv.Main_text.COUNT += 1
             pv.Main_text.CATEGOARY = "其他垃圾"
             pv.numberofRubbish.otherBin += 1
 
+# -------------------------------------- Mseeage Part End
 
+# -------------------------------------- Camera Part
+def camera_check():
+    cam_max_num = 4
+    for device in range(0, cam_max_num):
+        stream = cv2.VideoCapture(device)
+        grabbed = stream.grab()
+        if grabbed:
+            # print("use camera device: " + str(device))
+            log.logger.info("use camera device: " + str(device))
+            return device
+    return -1
 
+def camera_init():
+    global cameraCapture
 
+    cam_present_num = camera_check()
+    if cam_present_num == -1:
+        # print("camera start failed")
+        log.logger.error("camera start failed")
+        exit(0)
 
-
+    cameraCapture = cv2.VideoCapture(cam_present_num)
 #
-def take_pic():
-    time.sleep(2)
-    print("拍摄中－－－－－－－－－－－－－－－－－－－－")
-    cameraCapture = cv2.VideoCapture(0)
+def take_pic(mode=1):
+    global cameraCapture
+
     # success, imagemiddle = cameraCapture.read()
     # time.sleep(5)
+    time.sleep(1)
+    # print("拍摄中－－－－－－－－－－－－－－－－－－－－")
+    log.logger.info("拍摄中－－－")
     for i in range(15):
         success, imagemiddle = cameraCapture.read()
     cv2.destroyAllWindows()
@@ -139,15 +171,20 @@ def take_pic():
     global list_num
     cv2.imwrite('/home/ubuntu/python_pro/A_polyp/pic/laji' + str(list_num) + '.jpg', imagemiddle)
     list_num +=1
-    print("拍照完成－－－－－－－－－－－－－－－－－－－－－－")
+    # print("拍照完成－－－－－－－－－－－－－－－－－－－－－－")
+    log.logger.info("拍照完成－－－")
     return imagemiddle
 
+# -------------------------------------- Camera Part End
+
+
+# -------------------------------------- Detect Part
 def add_num():
     global time_num
     time_num += 1
-    if time_num % 3 == 0 and time_num > 0:
+    if time_num % 2 == 0 and time_num > 0:
         pv.Main_text.NAME = "砖瓦石头"
-        SendMessage('4')
+        SendMessage(4)
 
 def take_detect():
     global time_num
@@ -158,37 +195,57 @@ def take_detect():
     #flag, image, rubbish_class = Detect(net,LABELS,COLORS,image_path)
     try:
         flag, rubbish_class = ec.Easydl_Cpp()
-    except:
-        traceback.print_exc()
-    if flag:
-        time_num = 0
-        pv.showText()
-        if rubbish_class != 5 and rubbish_class != 0:
-            SendMessage(rubbish_class)
-    else:
-        add_num()
+
+        # traceback.# print_exc()
+        if flag:
+            time_num = 0
+            pv.showText()
+            if rubbish_class != 5 and rubbish_class != 0:
+                SendMessage(rubbish_class)
+        elif not flag:
+            add_num()
+            take_pic()
+            flag_2,rubbish_class = ec.Easydl_Cpp()
+            if flag_2:
+                time_num = 0
+            pv.showText()
+            if rubbish_class != 5 and rubbish_class != 0:
+                SendMessage(rubbish_class)
+            elif not flag_2:
+                add_num()
+    except Exception as e:
+        # traceback.print_exc()
+        log.logger.error("detect error:" + str(e))
         # time.sleep(1)
     #*unlimit loop
     # take_detect()
 
+# Mian Detect start
+def detect(): 
+    global detect_num
+    while True:
+        if(detect_num > 0):
+            take_detect()
+            detect_num -= 1
+
+# -------------------------------------- Detect Part End
 
 
+# -------------------------------------- Message Listen Part (Main)
 # Main Core Start
 def pylisten(serial):
     global detect_num
     while True:
         s = serial.readline()
         if s :
-            print("rec:"+str(s))
-            if b's' in s:
+            # print("rec:"+str(s))
+            log.logger.info("receive message: " +  str(s))
+            if b's' in s or b'S' in s:
                 detect_num += 1
 
-def detect():
-    global detect_num
-    while True:
-        if(detect_num > 0):
-            take_detect()
-            detect_num -= 1
+# -------------------------------------- Message Listen Part End
+
+
 
 
 def WarnUp():
@@ -202,7 +259,9 @@ def WarnUp():
 # 0 is safe 
 # 5 is failed 
 if __name__ == '__main__':
-    print("start\n")
+    # print("start\n")
+    log.logger.info("system start!")
+    camera_init()
     if(WarnUp()):   
         SendMessage(0)
     else:
@@ -219,16 +278,16 @@ if __name__ == '__main__':
     t4 = threading.Thread(target=pv.playSound)
     t4.start()
     pv.win.mainloop()
-    # RB_Class_Send must be surrounded by try ... except
+    # RB_Class_Send must be surrounded by try ... except Exception as e
     # for non-blocking receving a reply
     # try:
     #     RB_Class_Send(my_serial)
-    # except:
+    # except Exception as e:
     #     time.sleep(3)
-    #     print("time delay 3s")
+    #     # print("time delay 3s")
     #     RB_Class_Send(my_serial)
     # list_port = list(serial.tools.list_ports.comports())
-    # print(list_port)
+    # # print(list_port)
 
 
 
