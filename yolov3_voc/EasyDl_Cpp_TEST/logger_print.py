@@ -2,12 +2,17 @@ import logging
 
 # 第一步，创建一个logger
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)  # Log等级总开关  此时是INFO
+logger_coordinate = logging.getLogger()
 
+logger.setLevel(logging.INFO)  # Log等级总开关  此时是INFO
+logger_coordinate.setLevel(logging.INFO)
 # 第二步，创建一个handler，用于写入日志文件
 logfile = './log.txt'
+logfile_coordinate = './log_cor.txt'
 fh = logging.FileHandler(logfile, mode='a')  # open的打开模式这里可以进行参考
 fh.setLevel(logging.INFO)  # 输出到file的log等级的开关
+cor_fh = logging.FileHandler(logfile_coordinate, mode='a')
+cor_fh.setLevel(logging.INFO)
 
 # 第三步，再创建一个handler，用于输出到控制台
 ch = logging.StreamHandler()
@@ -17,11 +22,13 @@ ch.setLevel(logging.INFO)   # 输出到console的log等级的开关
 formatter = logging.Formatter("%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s")
 fh.setFormatter(formatter)
 ch.setFormatter(formatter)
+cor_fh.setFormatter(formatter)
 
 # 第五步，将logger添加到handler里面
 logger.addHandler(fh)
 logger.addHandler(ch)
 
+logger_coordinate.addHandler(cor_fh)
 # 日志级别
 # logger.debug('这是 logger debug message')
 # logger.info('这是 logger info message')

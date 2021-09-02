@@ -128,25 +128,6 @@ def showText():
     # win.mainloop()
 
 
-# def showText2(num):
-#     flag = ''
-#     if Main_text.FULL_LOAD_FLAG is True:
-#         flag = '已满载'
-#     else:
-#         flag = '未满载'
-#
-#     if num is 1:
-#         text = '厨余垃圾'
-#         text2.insert(tk.INSERT, text+'、'+str(numberofRubbish.kinchenBin)+',' + flag)
-#     elif num is 2:
-#         text = '可回收垃圾'
-#         text2.insert(tk.INSERT, text+'、'+str(numberofRubbish.recyclabelsBin)+',' + flag)
-#     elif num is 3:
-#         text = '有害垃圾'
-#         text2.insert(tk.INSERT, text+'、'+str(numberofRubbish.harmfulBin)+',' + flag)
-#     elif num is 4:
-#         text = '其他垃圾'
-#         text2.insert(tk.INSERT, text+'、'+str(numberofRubbish.otherBin)+',' + flag)
 
 def showText2():
     text2.delete('0.0', tk.END)
@@ -196,39 +177,9 @@ def showText2():
         text2.insert(a4, '其他垃圾' + '、' + str(numberofRubbish.otherBin) + '，' + flag4 + '\n', 'tag2')
 
 
-# def test_for_number():
-#     text2.delete('0.0', tk.END)
-#     text = '厨余垃圾'
-#     ft = tf.Font(family='微软雅黑', size=15)
-#     a = '0.0'
-#     text2.tag_add('tag', a)
-#     text2.tag_config('tag', foreground='red', font=ft)
-#
-#     a2 = '2.0'
-#     text2.tag_add('tag2', a2)
-#     text2.tag_config('tag2', foreground='blue', font=ft)
-#
-#     text2.insert(a, text + '\n', 'tag')
-#     # text2.insert(tk.INSERT, text+'、'+str(numberofRubbish.kinchenBin)+',\n' )
-#     text = '可回收垃圾'
-#     text2.insert(a2, text + '\n', 'tag2')
-#     # text2.insert(tk.INSERT, text+'、'+str(numberofRubbish.recyclabelsBin)+',\n')
-#
-#     text = '有害垃圾'
-#     text2.insert(tk.INSERT, text + '、' + str(numberofRubbish.harmfulBin) + ',\n')
-#     text = '其他垃圾'
-#     text2.insert(tk.INSERT, text + '、' + str(numberofRubbish.otherBin) + ',')
-
 
 def playSound():
-    # while 1:
-    #     file = "/home/ubuntu/python_pro/A_polyp/垃圾分类宣传2.wav"
-    #     pygame.mixer.init()
-    #     print("播放音乐1")
-    #     track = pygame.mixer.music.load(file)
-    #     pygame.mixer.music.play()
-    #     time.sleep(58)
-    #     pygame.mixer.music.stop()
+
     pygame.init()
     pygame.mixer.init()
     music = pygame.mixer.music.load("/home/ubuntu/python_pro/A_polyp/垃圾分类宣传2.wav")
