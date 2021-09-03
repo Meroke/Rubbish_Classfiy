@@ -193,14 +193,7 @@ def showText2():
 
 
 def playSound():
-    # while 1:
-    #     file = "/home/ubuntu/python_pro/A_polyp/垃圾分类宣传2.wav"
-    #     pygame.mixer.init()
-    #     print("播放音乐1")
-    #     track = pygame.mixer.music.load(file)
-    #     pygame.mixer.music.play()
-    #     time.sleep(58)
-    #     pygame.mixer.music.stop()
+
     pygame.init()
     pygame.mixer.init()
     music = pygame.mixer.music.load("/home/ubuntu/python_pro/A_polyp/垃圾分类宣传2.wav")
