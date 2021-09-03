@@ -169,7 +169,7 @@ def take_pic(mode=1):
 
     cv2.imwrite('/home/ubuntu/python_pro/A_polyp/pic_save/laji.jpg',imagemiddle)
     global list_num
-    cv2.imwrite('/home/ubuntu/python_pro/A_polyp/pic/laji' + str(list_num) + '.jpg', imagemiddle)
+    cv2.imwrite('/home/ubuntu/python_pro/A_polyp/pic/ori' + str(list_num) + '.jpg', imagemiddle)
     list_num +=1
     # print("拍照完成－－－－－－－－－－－－－－－－－－－－－－")
     log.logger.info("拍照完成－－－")

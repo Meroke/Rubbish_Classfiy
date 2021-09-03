@@ -1,12 +1,12 @@
 import logging
-
+import time
 # 第一步，创建一个logger
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)  # Log等级总开关  此时是INFO
 
+logger.setLevel(logging.INFO)  # Log等级总开关  此时是INFO
 # 第二步，创建一个handler，用于写入日志文件
-logfile = './log.txt'
-fh = logging.FileHandler(logfile, mode='a')  # open的打开模式这里可以进行参考
+logfile = '/home/ubuntu/python_pro/A_polyp/yolov3_voc/EasyDl_Cpp_TEST/log/{}LOG.txt'.format(time.strftime("%Y-%m-%d-%H:%M:%S",time.localtime()))
+fh = logging.FileHandler(logfile, mode='w')  # open的打开模式这里可以进行参考
 fh.setLevel(logging.INFO)  # 输出到file的log等级的开关
 
 # 第三步，再创建一个handler，用于输出到控制台

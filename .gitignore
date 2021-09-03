@@ -1,5 +1,5 @@
 pic/
 pic_save/
-log.txt
-zip
-sh
+*.txt
+*.zip
+*.sh

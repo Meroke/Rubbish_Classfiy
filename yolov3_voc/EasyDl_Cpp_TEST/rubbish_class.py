@@ -24,8 +24,13 @@ ChineseName = {'apple': '苹果', 'orange': '橘子', 'pear': '梨', 'broccoli':
 rubbish_class=0
 def return_rubbish_class(class_name):
     key = class_name
+    cla = 0
     if rubbish.get(key) is not None:
-        return rubbish[key]
+        cla = rubbish[key]
     else:
-        return 0
-
+        cla = 0
+    # unrecorded rubbish is Other Rubbish
+    if cla != 5:  # 不是白板
+        if cla != 1 and cla != 2 and cla != 3:  # 不在记录中的垃圾全部识别为其他垃圾
+            cla = 4
+    return cla

@@ -10,6 +10,11 @@ from concurrent.futures import ThreadPoolExecutor
 from imutils.video import WebcamVideoStream
 import traceback
 
+class _text3:
+    def __init__(self):
+        self.count = 0
+        self.line_text = []
+
 
 class all_text:
     def __init__(self):
@@ -39,6 +44,7 @@ class numOfRubbishCan:
 # 主要文本
 Main_text = all_text()
 numberofRubbish = numOfRubbishCan()
+_Text3 = _text3()
 
 record_time = 0
 window_width = 1850
@@ -104,6 +110,7 @@ def label_forget(text1):
 # i = 0
 def showText():
     showText2()
+    showText3()
     global Main_text
     text_num = Main_text.COUNT
     text_categary = Main_text.NAME
@@ -127,26 +134,14 @@ def showText():
 
     # win.mainloop()
 
-
-# def showText2(num):
-#     flag = ''
-#     if Main_text.FULL_LOAD_FLAG is True:
-#         flag = '已满载'
-#     else:
-#         flag = '未满载'
-#
-#     if num is 1:
-#         text = '厨余垃圾'
-#         text2.insert(tk.INSERT, text+'、'+str(numberofRubbish.kinchenBin)+',' + flag)
-#     elif num is 2:
-#         text = '可回收垃圾'
-#         text2.insert(tk.INSERT, text+'、'+str(numberofRubbish.recyclabelsBin)+',' + flag)
-#     elif num is 3:
-#         text = '有害垃圾'
-#         text2.insert(tk.INSERT, text+'、'+str(numberofRubbish.harmfulBin)+',' + flag)
-#     elif num is 4:
-#         text = '其他垃圾'
-#         text2.insert(tk.INSERT, text+'、'+str(numberofRubbish.otherBin)+',' + flag)
+def showText3():
+    text3.delete('0.0', tk.END)
+    text = "***NO.{}***\n".format(_Text3.count)
+    text3.insert(tk.INSERT, text)
+    text3.insert(tk.INSERT, '\n')
+    for i in range(len(_Text3.line_text)):
+        text3.insert(tk.INSERT,_Text3.line_text[i])
+        text3.insert(tk.INSERT, '\n')
 
 def showText2():
     text2.delete('0.0', tk.END)
@@ -196,29 +191,6 @@ def showText2():
         text2.insert(a4, '其他垃圾' + '、' + str(numberofRubbish.otherBin) + '，' + flag4 + '\n', 'tag2')
 
 
-# def test_for_number():
-#     text2.delete('0.0', tk.END)
-#     text = '厨余垃圾'
-#     ft = tf.Font(family='微软雅黑', size=15)
-#     a = '0.0'
-#     text2.tag_add('tag', a)
-#     text2.tag_config('tag', foreground='red', font=ft)
-#
-#     a2 = '2.0'
-#     text2.tag_add('tag2', a2)
-#     text2.tag_config('tag2', foreground='blue', font=ft)
-#
-#     text2.insert(a, text + '\n', 'tag')
-#     # text2.insert(tk.INSERT, text+'、'+str(numberofRubbish.kinchenBin)+',\n' )
-#     text = '可回收垃圾'
-#     text2.insert(a2, text + '\n', 'tag2')
-#     # text2.insert(tk.INSERT, text+'、'+str(numberofRubbish.recyclabelsBin)+',\n')
-#
-#     text = '有害垃圾'
-#     text2.insert(tk.INSERT, text + '、' + str(numberofRubbish.harmfulBin) + ',\n')
-#     text = '其他垃圾'
-#     text2.insert(tk.INSERT, text + '、' + str(numberofRubbish.otherBin) + ',')
-
 
 def playSound():
     # while 1:
@@ -253,6 +225,10 @@ text1.grid(row=1, column=1)  # text1  place in (0,1)
 text2 = tk.Text(win, width=22, height=11, font=('Times', 15, 'bold'))
 # text2.grid(row=0, column=2)
 text2.place(relx=0.93,rely=0.12,anchor=CENTER)
+
+text3 = tk.Text(win, width=22, height=21, font=('Times', 15, 'bold'))
+text3.place(x=1570,y=600)
+
 # win_text = tk.Text(win, width=20, height=1,font=('Times',15,'bold'))  # 任务完成提示框,调整边框大小位置
 # win_text.grid(row=1, column=2)
 # win_text.insert("insert","满载检测： ")
@@ -264,12 +240,12 @@ text2.place(relx=0.93,rely=0.12,anchor=CENTER)
 
 if __name__ == '__main__':
     p1 = threading.Thread(target=playvedio)
-    p1.setDaemon(True)
+    # p1.setDaemon(True)
     p1.start()
     p2 = threading.Thread(target=showText)
-    p2.setDaemon(True)
+    # p2.setDaemon(True)
     p2.start()
     p3 = threading.Thread(target=playSound)
-    p3.setDaemon(True)
+    # p3.setDaemon(True)
     p3.start()
     win.mainloop()
